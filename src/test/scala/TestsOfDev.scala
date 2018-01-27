@@ -12,9 +12,7 @@ object TestsOfDev {
   }
 
 
-  def add(a: Int, b: Int) = {
-    4
-  }
+  def add(a: Int, b: Int) = 4
 
   // Fake test function
   def test(name: String)(predicate: => Any) = ???

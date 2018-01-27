@@ -2,6 +2,37 @@ import org.scalacheck.Prop.{collect, forAll}
 import org.scalacheck.{Gen, Properties}
 
 object NewFromExisting extends Properties("NewFromExisting") {
+  val leftInt: Gen[Int] = Gen.choose(-100, 0)
+  val rightInt: Gen[Int] = Gen.choose(1, 100)
+
+  val twoInts: Gen[(Int, Int)] = leftInt.flatMap((left: Int) => {
+    rightInt.map((right: Int) => {
+      (left, right)
+    })
+  })
+
+  val twoInts2: Gen[(Int, Int)] = leftInt.flatMap(left => {
+    rightInt.map(right => {
+      (left, right)
+    })
+  })
+
+  val twoInts3: Gen[(Int, Int)] = leftInt flatMap { left =>
+    rightInt map { right =>
+      (left, right)
+    }
+  }
+
+  val twoInts4: Gen[(Int, Int)] = for {
+    left <- leftInt
+    right <- rightInt
+  } yield (left, right)
+
+  val int: Gen[Int] = Gen.choose(1, 100)
+  val intToString: Gen[String] = int.map(i => i.toString)
+
+  val start: Gen[Int] = Gen.choose(1, 100)
+  val bigger: Gen[Int] = start.flatMap(i => Gen.choose(i, 9999))
 
   val abc = Gen.oneOf('A', 'B', 'C')
 
@@ -24,7 +55,6 @@ object NewFromExisting extends Properties("NewFromExisting") {
       Seq('G', 'A', 'R', 'E', 'N') contains char
     }
   }
-
 }
 
 object CustomClass extends Properties("CustomClass") {
@@ -35,13 +65,13 @@ object CustomClass extends Properties("CustomClass") {
     }
   }
 
-  case class Person(name: String, age: Int)
+  class Person(val name: String, val age: Int)
 
   val personGen: Gen[Person] = {
     for {
       name <- Gen.alphaLowerStr
       age <- Gen.choose(1, 100)
-    } yield Person(name, age)
+    } yield new Person(name, age)
   }
 
   /**
